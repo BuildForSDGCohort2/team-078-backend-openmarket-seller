@@ -8,5 +8,5 @@ db.sqlite3
 **.ini
 **/node_modules*
 **.log
-
+venv/
 !logging.ini
