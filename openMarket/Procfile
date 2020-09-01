@@ -1,0 +1,1 @@
+web: gunicorn openMarket.wsgi  --log-file -

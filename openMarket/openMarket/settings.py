@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv, find_dotenv
+import dj_database_url
+
+load_dotenv(find_dotenv())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -28,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # 'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'api',
     'rest_framework'
@@ -35,6 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,10 +72,19 @@ WSGI_APPLICATION = 'openMarket.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': str(os.getenv('DATABASE_ENGINE')), #django.db.backends.postgresql_psycopg2 ,django.db.backends.mysql
+        'NAME': str(os.getenv('DATABASE_NAME')), 
+        'USER': str(os.getenv('DATABASE_USER')),  # root
+        'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
+        'HOST': str(os.getenv('DATABASE_HOST')),#localhost
+        'PORT': str(os.getenv('DATABASE_PORT')),
     }
+
 }
 
 
@@ -113,4 +126,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 AUTH_USER_MODEL = 'api.Profile'
+
+if bool(os.getenv('HEROKU')):
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
