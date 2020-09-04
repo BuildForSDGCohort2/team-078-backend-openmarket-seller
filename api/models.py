@@ -1,12 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django import forms
+
+PROFILE_TYPES = (
+    ("Buyer", "Buyer"),
+    ("Seller", "Seller"),
+    )
 
 class Profile(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     address = models.TextField(null=True)
-    profile_type = models.CharField(max_length=30)
+    profile_type = models.CharField(choices=PROFILE_TYPES, default="Buyer", max_length=6)
     phone_number = models.CharField(max_length=30)
     country = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
