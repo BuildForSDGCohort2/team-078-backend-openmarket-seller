@@ -2,3 +2,4 @@
 thevenv/
 **/__pycache__
 **/migrations
+.vscode/
