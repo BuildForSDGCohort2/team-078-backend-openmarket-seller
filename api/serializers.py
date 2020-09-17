@@ -12,5 +12,3 @@ class SellerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SellerProfile
         fields = ('profile', 'business_name', 'business_description', 'address', 'email', 'phone')
-        
-

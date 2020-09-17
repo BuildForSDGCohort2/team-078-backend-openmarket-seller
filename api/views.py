@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from .models import Profile, SellerProfile
 from .serializers import ProfileSerializer, SellerSerializer
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -15,7 +14,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = ProfileSerializer(instance=instance, data=request.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
     def perform_create(self, request, *args, **kwargs):
         serializer = ProfileSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
