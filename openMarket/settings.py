@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
-    'users',
     'rest_framework.authtoken',
 ]
 
@@ -138,8 +137,10 @@ AUTH_USER_MODEL = 'api.Profile'
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
       'rest_framework.authentication.TokenAuthentication',
+      'rest_framework.authentication.SessionAuthentication'
     )
 }
+
 
 if bool(os.getenv('HEROKU')):
     db_from_env = dj_database_url.config(conn_max_age=500)
