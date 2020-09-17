@@ -8,7 +8,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('first_name', 'last_name', 'email', 'address', 'address', 'profile_type', 'phone_number', 'country', 'state', 'city')
 
 
-class SellerSerializer(serializers.HyperlinkedModelSerializer):
+class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = SellerProfile
-        fields = ('profile', 'business_name', 'business_description', 'address', 'email', 'phone')
+        fields = ['profile', 'business_name', 'business_description', 'address', 'email', 'phone']
