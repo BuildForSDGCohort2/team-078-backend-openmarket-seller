@@ -1,11 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django import forms
 
 PROFILE_TYPES = (
     ("Buyer", "Buyer"),
     ("Seller", "Seller"),
-    )
+)
 
 class Profile(AbstractUser):
     first_name = models.CharField(max_length=30)
@@ -68,7 +67,7 @@ class Product(WithInheritableColumn):
 
 class Order(WithInheritableColumn):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    additional_detail = models.TextField(),
+    additional_detail = models.TextField(null=True)
     shipping_cost = models.FloatField()
     products = models.ManyToManyField(Product, through='OrderDetail')
 
