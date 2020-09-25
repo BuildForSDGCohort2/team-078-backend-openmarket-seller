@@ -1,9 +1,12 @@
 from rest_framework import viewsets
-from .serializers import ProfileSerializer, SellerSerializer
 from rest_framework.response import Response
 from rest_framework import permissions, status
+from django.contrib.auth import get_user_model
+
+from .serializers import ProfileSerializer, SellerSerializer
 from .models import SellerProfile, Profile
 
+User = get_user_model()
 
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
