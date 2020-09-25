@@ -12,7 +12,6 @@ User = get_user_model()
 class SignupSerializer(RegisterSerializer):
     first_name = serializers.CharField(required=True, write_only=True)
     last_name = serializers.CharField(required=True, write_only=True)
-   
     def get_cleaned_data(self):
         return {
             'first_name': self.validated_data.get('first_name', ''),
@@ -35,12 +34,10 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         model = Profile
         fields = ('first_name', 'last_name', 'email', 'address', 'profile_type', 'phone_number', 'country', 'state', 'city')
 
-
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = SellerProfile
         fields = ['profile', 'business_name', 'business_description', 'address', 'email', 'phone']
-
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
