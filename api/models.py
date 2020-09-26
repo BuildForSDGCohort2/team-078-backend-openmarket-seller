@@ -1,6 +1,9 @@
 from django.db import models
-# from django.contrib.auth.models import AbstractUser
 from django import forms
+import uuid
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 PROFILE_TYPES = (
     ("Buyer", "Buyer"),
@@ -8,18 +11,19 @@ PROFILE_TYPES = (
     )
 
 class Profile(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    email = models.EmailField(unique=True)
-    address = models.TextField(null=True)
+    """
+    User Profile
+    """
+    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    address = models.TextField(max_length=512, blank=True, null=True)
     profile_type = models.CharField(choices=PROFILE_TYPES, default="Buyer", max_length=6)
-    phone_number = models.CharField(max_length=30)
-    country = models.CharField(max_length=50)
-    state = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
+    country = models.CharField(max_length=225)
+    state = models.CharField(max_length=225)
+    city = models.CharField(max_length=225)
 
     def __str__(self):
-        return self.first_name
+        return self.user
 
 #base model class for common fields
 class WithInheritableColumn(models.Model):
@@ -52,6 +56,12 @@ class Category(WithInheritableColumn):
 
     def __str__(self):
         return self.name
+    
+    class Meta():
+        """
+        Meta class
+        """
+        verbose_name_plural = 'Categories'
 
 class Product(WithInheritableColumn):
     sku = models.CharField(max_length=50)
