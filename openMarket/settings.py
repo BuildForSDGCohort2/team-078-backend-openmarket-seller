@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv('DEBUG_STATUS'))
 
 ALLOWED_HOSTS = ['*']
@@ -32,20 +32,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     # 'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    'api',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'rest_framework',
     'rest_framework.authtoken',
+    'dj_rest_auth',
+    # apps
+    'api',
+    'accounts',
+    'store',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'openMarket.urls'
@@ -61,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # allauth
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -79,7 +92,7 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': str(os.getenv('DATABASE_ENGINE')), #django.db.backends.postgresql_psycopg2 ,django.db.backends.mysql
-        'NAME': str(os.getenv('DATABASE_NAME')), 
+        'NAME': str(os.getenv('DATABASE_NAME')),
         'USER': str(os.getenv('DATABASE_USER')),  # root
         'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
         'HOST': str(os.getenv('DATABASE_HOST')),#localhost
@@ -127,20 +140,46 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-AUTH_USER_MODEL = 'api.Profile'
-
+AUTH_USER_MODEL = 'accounts.User'
 
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
       'rest_framework.authentication.TokenAuthentication',
-      'rest_framework.authentication.SessionAuthentication'
+    #   'rest_framework.authentication.SessionAuthentication'
     )
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # allauth
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '123',
+            'secret': '456',
+            'key': ''
+        }
+    }
+}
+
+SITE_ID = 1
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED=True
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'api.serializers.SignupSerializer',
+}
 
 if bool(os.getenv('HEROKU')):
     db_from_env = dj_database_url.config(conn_max_age=500)

@@ -12,5 +12,7 @@ router.register(r'SellerProfile', views.SellerViewSet, basename='Seller')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
+     path('auth/', include('dj_rest_auth.urls')),
+    path('auth/signup/', include('dj_rest_auth.registration.urls')),
+    path('api', include('rest_framework.urls', namespace='rest_framework'))
 ]
