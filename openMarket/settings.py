@@ -180,6 +180,9 @@ ACCOUNT_EMAIL_REQUIRED=True
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'api.serializers.RegisterSerializer',
+}
+
+REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
 }
 if bool(os.getenv('HEROKU')):
