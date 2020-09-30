@@ -67,7 +67,7 @@ class CreateModelViewSet(mixins.CreateModelMixin,viewsets.GenericViewSet):
 class SignUpViewSet(CreateModelViewSet):
     serializer_class = SignUpSerializer
 
-    def create(self, request, *kwargs):
+    def create(self, request):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -83,9 +83,9 @@ class SignUpViewSet(CreateModelViewSet):
 class LoginViewSet(CreateModelViewSet):
     serializer_class = LoginSerializer
 
-    def create(self, request, *kwargs):
+    def create(self, request):
         user = authenticate(
-            username=request.data['username'], 
+            email=request.data['email'], 
             password=request.data['password']
         )
 
@@ -104,7 +104,7 @@ class LoginViewSet(CreateModelViewSet):
 class LogoutViewSet(CreateModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *kwargs):
+    def create(self, request):
         try:
             request.user.auth_token.delete()
         except (AttributeError, ObjectDoesNotExist):
@@ -126,20 +126,13 @@ class CreateOrderViewSet(CreateModelViewSet):
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *kwargs):
-        products = request.data['products']
+    def create(self, request):
         data = request.data.copy()
-        data.pop('products')
         data['profile'] = request.user.id
         serializer = self.serializer_class(data=data)
         
         if serializer.is_valid():
             order = serializer.save()
-            for product in json.loads(products):
-                order.products.add(
-                    product['id'], 
-                    through_defaults={'unit':product['unit']}
-                )
         else: 
             return Response(serializer.errors)
 
@@ -147,14 +140,16 @@ class CreateOrderViewSet(CreateModelViewSet):
 
 
 class ListBuyerOrderViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return Order.objects.filter(
-            profile_id=self.request.query_params.get('buyer_id')
-            # profile__id=request.query_params.get('buyer_id')
+    def list(self, request):
+        orders = Order.objects.filter(
+            profile_id=request.query_params.get('buyer_id')
         )
+        serialized = OrderSerializer(orders,many=True)
+        return Response(serialized.data,status.HTTP_200_OK)
 
 class ListSellerOrderViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderSerializer

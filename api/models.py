@@ -6,6 +6,7 @@ PROFILE_TYPES = (
     ("Seller", "Seller"),
 )
 
+
 class Profile(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -16,6 +17,8 @@ class Profile(AbstractUser):
     country = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.first_name
