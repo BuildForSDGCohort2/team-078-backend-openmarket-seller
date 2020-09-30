@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv, find_dotenv
+import django_heroku
 import dj_database_url
 
 load_dotenv(find_dotenv())
@@ -180,7 +181,10 @@ ACCOUNT_EMAIL_REQUIRED=True
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'api.serializers.SignupSerializer',
 }
-
 if bool(os.getenv('HEROKU')):
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'].update(db_from_env)
+    DATABASES['default'] = dj_database_url.config(conn_max_age=500)
+    # db_from_env = dj_database_url.config(conn_max_age=500)
+    # DATABASES['default'].update(db_from_env)
+    
+    
+django_heroku.settings(locals())
