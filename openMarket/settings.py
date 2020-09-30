@@ -179,7 +179,8 @@ ACCOUNT_EMAIL_REQUIRED=True
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'api.serializers.SignupSerializer',
+    'REGISTER_SERIALIZER': 'api.serializers.RegisterSerializer',
+    'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
 }
 if bool(os.getenv('HEROKU')):
     DATABASES['default'] = dj_database_url.config(conn_max_age=500)
