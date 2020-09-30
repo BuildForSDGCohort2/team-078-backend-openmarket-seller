@@ -8,8 +8,6 @@ router.register(r'BuyerProfile', views.ProfileViewSet, basename='buyer')
 router.register(r'SellerProfile', views.SellerViewSet, basename='Seller')
 
 
-
-
 urlpatterns = [
     path('', include(router.urls)),
      path('auth/', include('dj_rest_auth.urls')),
