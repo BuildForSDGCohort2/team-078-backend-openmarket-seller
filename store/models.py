@@ -10,5 +10,5 @@ class Product(models.Model):
     unit_of_measurement = models.CharField(max_length=255)
 
     def __str__(self):
-        # String
+        # String 
         return self.name
