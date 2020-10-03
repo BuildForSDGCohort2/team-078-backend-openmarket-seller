@@ -1,6 +1,7 @@
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
-from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.registration.serializers import RegisterSerializer as AuthRegisterSerializer
+from dj_rest_auth.serializers import LoginSerializer as AuthLoginSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -9,7 +10,8 @@ from .models import Profile, SellerProfile, Product
 
 User = get_user_model()
 
-class SignupSerializer(RegisterSerializer):
+class RegisterSerializer(AuthRegisterSerializer):
+    username = None
     first_name = serializers.CharField(required=True, write_only=True)
     last_name = serializers.CharField(required=True, write_only=True)
     def get_cleaned_data(self):
@@ -29,6 +31,9 @@ class SignupSerializer(RegisterSerializer):
         user.save()
         return user
 
+class LoginSerializer(AuthLoginSerializer):
+    username = None
+   
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv, find_dotenv
+import django_heroku
 import dj_database_url
 
 load_dotenv(find_dotenv())
@@ -86,18 +87,18 @@ WSGI_APPLICATION = 'openMarket.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': str(os.getenv('DATABASE_ENGINE')), #django.db.backends.postgresql_psycopg2 ,django.db.backends.mysql
-        'NAME': str(os.getenv('DATABASE_NAME')),
-        'USER': str(os.getenv('DATABASE_USER')),  # root
-        'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
-        'HOST': str(os.getenv('DATABASE_HOST')),#localhost
-        'PORT': str(os.getenv('DATABASE_PORT')),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': str(os.getenv('DATABASE_ENGINE')), #django.db.backends.postgresql_psycopg2 ,django.db.backends.mysql
+    #     'NAME': str(os.getenv('DATABASE_NAME')),
+    #     'USER': str(os.getenv('DATABASE_USER')),  # root
+    #     'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
+    #     'HOST': str(os.getenv('DATABASE_HOST')),#localhost
+    #     'PORT': str(os.getenv('DATABASE_PORT')),
+    # }
 
 }
 
@@ -178,9 +179,16 @@ ACCOUNT_EMAIL_REQUIRED=True
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'api.serializers.SignupSerializer',
+    'REGISTER_SERIALIZER': 'api.serializers.RegisterSerializer',
 }
 
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
+}
 if bool(os.getenv('HEROKU')):
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'].update(db_from_env)
+    DATABASES['default'] = dj_database_url.config(conn_max_age=500)
+    # db_from_env = dj_database_url.config(conn_max_age=500)
+    # DATABASES['default'].update(db_from_env)
+    
+    
+django_heroku.settings(locals())
