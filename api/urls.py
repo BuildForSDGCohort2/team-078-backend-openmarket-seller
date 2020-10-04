@@ -4,11 +4,6 @@ from . import views
 
 
 router = routers.DefaultRouter()
-router.register(r'BuyerProfile', views.ProfileViewSet, basename='buyer')
-router.register(r'SellerProfile', views.SellerViewSet, basename='Seller')
-
-
-urlpatterns = [
-    path('', include(router.urls)),
-    path('api', include('rest_framework.urls', namespace='rest_framework'))
-]
+router.register(r'profile/seller', views.SellerProfileViewSet)
+router.register(r'profile/buyer', views.BuyerProfileViewSet, basename='buyer')
+router.register(r'profile', views.ProfileViewSet, basename='profile')
