@@ -13,5 +13,5 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 class SellerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = SellerProfile
-        fields = ['profile', 'business_name', 'business_description', 'address', 'email', 'phone']
+        fields = ['id','profile', 'business_name', 'business_description', 'address', 'email', 'phone']
 

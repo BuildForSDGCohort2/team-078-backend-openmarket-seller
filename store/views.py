@@ -24,19 +24,13 @@ class CreateOrderViewSet(CreateModelViewSet):
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *kwargs):
+    def create(self, request):
         data = request.data.copy()
-        products = data.pop('products')
-        data['user'] = request.user.id
+        data['profile'] = request.user.id
         serializer = self.serializer_class(data=data)
         
         if serializer.is_valid():
             order = serializer.save()
-            for product in json.loads(products):
-                order.products.add(
-                    product['id'], 
-                    through_defaults={'unit':product['unit']}
-                )
         else: 
             return Response(serializer.errors)
 
@@ -58,6 +52,12 @@ class ListSellerOrderViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Order.objects.filter(
-            products__seller_profile_id=self.request.query_params.get('seller_id')
-        )
+        filter = {
+            "id":0,
+            "products__seller_profile_id":self.request.query_params.get('seller_id')
+        }
+        if self.request.query_params.get('seller_id'):
+            filter.pop('id')
+        else: filter.pop('products__seller_profile_id')
+        
+        return Order.objects.filter(**filter)
