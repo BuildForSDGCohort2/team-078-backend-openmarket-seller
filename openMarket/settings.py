@@ -1,4 +1,5 @@
 import os
+import json
 from pathlib import Path
 
 from dotenv import load_dotenv, find_dotenv
@@ -51,13 +52,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'openMarket.urls'
@@ -85,21 +86,19 @@ WSGI_APPLICATION = 'openMarket.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
     # 'default': {
-    #     'ENGINE': str(os.getenv('DATABASE_ENGINE')), #django.db.backends.postgresql_psycopg2 ,django.db.backends.mysql
-    #     'NAME': str(os.getenv('DATABASE_NAME')),
-    #     'USER': str(os.getenv('DATABASE_USER')),  # root
-    #     'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
-    #     'HOST': str(os.getenv('DATABASE_HOST')),#localhost
-    #     'PORT': str(os.getenv('DATABASE_PORT')),
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-
+    'default': {
+        'ENGINE': str(os.getenv('DATABASE_ENGINE')), #django.db.backends.postgresql_psycopg2 ,django.db.backends.mysql
+        'NAME': str(os.getenv('DATABASE_NAME')),
+        'USER': str(os.getenv('DATABASE_USER')),  # root
+        'PASSWORD': str(os.getenv('DATABASE_PASSWORD')),
+        'HOST': str(os.getenv('DATABASE_HOST')),#localhost
+        'PORT': str(os.getenv('DATABASE_PORT')),
+    }
 }
 
 
@@ -150,7 +149,7 @@ AUTH_USER_MODEL = 'accounts.User'
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
       'rest_framework.authentication.TokenAuthentication',
-    #   'rest_framework.authentication.SessionAuthentication'
+      'rest_framework.authentication.SessionAuthentication'
     )
 }
 
@@ -179,16 +178,16 @@ ACCOUNT_EMAIL_REQUIRED=True
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'api.serializers.RegisterSerializer',
+    'REGISTER_SERIALIZER': 'accounts.serializers.RegisterSerializer',
 }
 
 REST_AUTH_SERIALIZERS = {
-    'LOGIN_SERIALIZER': 'api.serializers.LoginSerializer',
+    'LOGIN_SERIALIZER': 'accounts.serializers.LoginSerializer',
 }
-if bool(os.getenv('HEROKU')):
+
+if json.loads(os.getenv('HEROKU').lower()):
     DATABASES['default'] = dj_database_url.config(conn_max_age=500)
     # db_from_env = dj_database_url.config(conn_max_age=500)
     # DATABASES['default'].update(db_from_env)
-    
     
 django_heroku.settings(locals())

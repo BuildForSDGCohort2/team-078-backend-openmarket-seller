@@ -1,58 +1,29 @@
+import json
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.authtoken.models import Token
 from rest_framework import viewsets
-from rest_framework.response import Response
+from rest_framework import mixins
 from rest_framework import permissions, status
-from django.contrib.auth import get_user_model
 
-from .serializers import ProfileSerializer, SellerSerializer
+from .serializers import ProfileSerializer, SellerProfileSerializer
 from .models import SellerProfile, Profile
 
-User = get_user_model()
+class CreateUpdateModelViewSet(
+    mixins.CreateModelMixin,mixins.UpdateModelMixin,viewsets.GenericViewSet
+):
+    pass
 
-class ProfileViewSet(viewsets.ModelViewSet):
+class ProfileViewSet(CreateUpdateModelViewSet):
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
-   
+
+class BuyerProfileViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ProfileSerializer
+
     def get_queryset(self):
-        qs = Profile.objects.all()
-        return qs
+        return Profile.objects.filter(profile_type='Buyer')
 
-    def perform_create(self, request, *args, **kwargs):
-        serializer = ProfileSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    
-    def perform_update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = ProfileSerializer(instance=instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        
-
-
-class SellerViewSet(viewsets.ModelViewSet):
-    serializer_class = SellerSerializer
+class SellerProfileViewSet(viewsets.ModelViewSet):
+    queryset = SellerProfile.objects.all()
+    serializer_class = SellerProfileSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        qs = SellerProfile.objects
-        return qs
-
-
-    def perform_create(self, request, *args, **kwargs):
-        serializer = SellerSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = SellerSerializer(instance=instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-
-
- 
