@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Profile, SellerProfile
+from .models import Profile, SellerProfile, Category, Order, Product
 
    
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
